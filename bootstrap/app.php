@@ -1,9 +1,9 @@
 <?php
 
-require_once __DIR__.'/../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 try {
-    (new Dotenv\Dotenv(__DIR__.'/../'))->load();
+    (new Dotenv\Dotenv(__DIR__ . '/../'))->load();
 } catch (Dotenv\Exception\InvalidPathException $e) {
     //
 }
@@ -20,10 +20,10 @@ try {
 */
 
 $app = new Laravel\Lumen\Application(
-    realpath(__DIR__.'/../')
+    realpath(__DIR__ . '/../')
 );
 
-// $app->withFacades();
+$app->withFacades();
 
 // $app->withEloquent();
 
@@ -63,9 +63,10 @@ $app->singleton(
 //    App\Http\Middleware\ExampleMiddleware::class
 // ]);
 
-// $app->routeMiddleware([
-//     'auth' => App\Http\Middleware\Authenticate::class,
-// ]);
+$app->routeMiddleware([
+    'auth' => App\Http\Middleware\Authenticate::class,
+    'guest' => App\Http\Middleware\RedirectIfAuthenticated::class,
+]);
 
 /*
 |--------------------------------------------------------------------------
@@ -78,8 +79,8 @@ $app->singleton(
 |
 */
 
-// $app->register(App\Providers\AppServiceProvider::class);
-// $app->register(App\Providers\AuthServiceProvider::class);
+$app->register(App\Providers\AppServiceProvider::class);
+$app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 
 /*
@@ -94,7 +95,23 @@ $app->singleton(
 */
 
 $app->group(['namespace' => 'App\Http\Controllers'], function ($app) {
-    require __DIR__.'/../routes/web.php';
+    require __DIR__ . '/../routes/web.php';
+});
+
+$app->group([
+    'namespace' => 'App\Http\Api\v1\Auth',
+    'middleware' => ['guest'],
+    'prefix' => 'api/v1/auth'
+], function ($app) {
+    require __DIR__ . '/../routes/api/v1/auth.php';
+});
+
+$app->group([
+    'namespace' => 'App\Http\Api\v1',
+    'middleware' => ['auth'],
+    'prefix' => 'api/v1'
+], function ($app) {
+    require __DIR__ . '/../routes/api/v1/api.php';
 });
 
 return $app;
