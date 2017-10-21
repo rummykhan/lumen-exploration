@@ -80,8 +80,10 @@ $app->routeMiddleware([
 */
 
 $app->register(App\Providers\AppServiceProvider::class);
-$app->register(App\Providers\AuthServiceProvider::class);
+// $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
+// $app->register(\Glumen\Foundation\Providers\AppServiceProvider::class);
+$app->register(\Glumen\Authorization\GlumenAuthServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------
@@ -96,22 +98,6 @@ $app->register(App\Providers\AuthServiceProvider::class);
 
 $app->group(['namespace' => 'App\Http\Controllers'], function ($app) {
     require __DIR__ . '/../routes/web.php';
-});
-
-$app->group([
-    'namespace' => 'App\Http\Api\v1\Auth',
-    'middleware' => ['guest'],
-    'prefix' => 'api/v1/auth'
-], function ($app) {
-    require __DIR__ . '/../routes/api/v1/auth.php';
-});
-
-$app->group([
-    'namespace' => 'App\Http\Api\v1',
-    'middleware' => ['auth'],
-    'prefix' => 'api/v1'
-], function ($app) {
-    require __DIR__ . '/../routes/api/v1/api.php';
 });
 
 return $app;

@@ -1,5 +1,9 @@
 <?php
 
-$app->get('/', function () {
-    return response()->json(["message" => 'Unauthorized! goto ' . url('/api/v1/login') . ' to authenticate.'], 401);
+$app->get('/', function (\Laravel\Lumen\Application $app) {
+    $authManager = $app->make('auth');
+
+    dd($authManager->user());
+
+    return app()->version();
 });
